@@ -1,0 +1,33 @@
+version: "3"
+services:
+  db:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ${MYSQL_DIR}:/var/lib/mysql
+    restart: always
+
+  frontend:
+    build: frontend
+    ports:
+      - ${PORT}:80
+    restart: always
+
+  backend:
+    build: backend
+    restart: always
+    volumes:
+      - ${SAPIEN_STORAGE}:/storage
+    user: $UID:$GID
+    environment:
+      - STORAGE=/storage
+      - PORT=8088
+      - DB_USER=root
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_KEY=${JWT_KEY}
+      - GMAIL_USERNAME=sapienaicontact@gmail.com
+      - GMAIL_PASSWORD=${GMAIL_PASSWORD}
+      

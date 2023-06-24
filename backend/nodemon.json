@@ -1,0 +1,6 @@
+{
+    "watch": ["./src"],
+    "ext": "ts",
+    "ignore": ["**/*.spec.ts", "**/flycheck*"],
+    "exec": "DEBUG=express:* ts-node ./src/index.ts"
+}

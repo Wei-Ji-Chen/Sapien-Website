@@ -1,0 +1,50 @@
+version: "3"
+services:
+  db:
+    image: mysql
+    ports:
+      - 33060:3306
+    restart: on-failure
+    environment:
+      - MYSQL_ROOT_PASSWORD=PASSWORD
+    volumes:
+      - ./mysql:/var/lib/mysql
+    user: $UID:$GID
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: dev.Dockerfile
+    ports:
+      - 4200:4200
+    restart: on-failure
+    volumes:
+      - ./frontend:/site
+    user: $UID:$GID
+
+  backend:
+    build:
+      context: backend
+      dockerfile: dev.Dockerfile
+    restart: on-failure
+    volumes:
+      - ./backend:/site
+      - ./storage:/storage
+    ports:
+      - 8088:8088
+    environment:
+      - STORAGE=/storage
+      - PORT=8088
+      - DB_USER=root
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_PASSWORD=PASSWORD
+      - JWT_KEY=test_key
+      - GMAIL_USERNAME=sapienaicontact@gmail.com
+      - GMAIL_PASSWORD=password  # email feature is disabled in development
+      - MODE=development
+    user: $UID:$GID
